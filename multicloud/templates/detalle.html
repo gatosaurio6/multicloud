@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+    </head>
+
+    <body>
+        {% if resultado.imagen %}
+            <img src="{{ resultado.imagen.url }}">
+        {% endif %}
+
+        {% if resultado.informe %}
+            <iframe src="{{ resultado.informe.url }}"></iframe>
+        {% endif %}
+
+        {% if resultado.informe %}
+            <p>
+                <a href="{{ resultado.informe.url }}" dowload> descargar informe</a>
+            </p>
+        {% endif %}
+        
+        {% if resultado.imagen %}
+            <p>
+                <a href="{{ resultado.imagen.url}}" dowload>Descargar imagen</a>
+            </p>
+        {% endif %}
+    </body>
+</html>

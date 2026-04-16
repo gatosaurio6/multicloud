@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> login </title>
+</html>
+<body>
+    <div class="login-box">
+        <h2>Login</h2>
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="user-box">
+                <input type="text" name="correo" id="id_correo" placeholder="Tu correo">
+                <label for="id_username">Usuario:</label>
+            </div>
+
+            <div class="user-box">
+                <input type="password" name="password" id="id_password" placeholder="Tu contraseña">
+                <label for="id_password">contraseña:</label>
+            </div>
+
+            <button type="submit" class="animated-button">
+                <span class="arr-1"></span>
+                <span class="text">Ingresar</span>
+                <span class="arr-2"></span>
+            </button>
+        </form>
+    </div>
+</body>
