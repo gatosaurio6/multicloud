@@ -60,13 +60,13 @@
         <h2>Imágenes</h2>
         <div class="contenedor">
             {% for r in imagen %}
-                <a href="{% url 'detalle' r.id%}" class="card imagen">
+                <a href="{% url 'detalle' r.id %}" class="card imagen">
                     <div class="titulo">{{ r.examen }}</div>
                     <div class="medico"> Dr. {{ r.medico.nombre }}</div>
                 </a>
             {% empty %}
                 <p>no hay imagenes disponibles</p>
-            {% endfor}
+            {% endfor %}
         </div>
 
         <h2>Informe</h2>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Paciente, Resultado, Area, Medico
+from .models import Paciente, Resultado, Medico
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.contrib.auth.hashers import check_password
@@ -35,13 +35,14 @@ def requiere_login(view_func):
         return view_func(request, *args, **kwargs)
     return wrapper
 
-@requiere_login
+#@requiere_login
 def resultado(request):
     paciente_id = request.session.get('paciente_id')
     informes = Resultado.objects.filter(paciente_id=paciente_id, informe__isnull=False).select_related('medico')
     imagenes = Resultado.objects.filter(paciente_id=paciente_id, imagen__isnull=False).select_related('medico')
     return render(request, 'resultados.html', {'informe': informes, 'imagen': imagenes})
 
-def detalle_resultado(request, id):
+#@requiere_login
+def detalle(request, id):
     resultado = Resultado.objects.get(id=id)
     return render(request, 'detalle.html', {'resultado':resultado})
