@@ -13,7 +13,7 @@ def login (request):
         password = request.POST.get('password')
         try:
             paciente = Paciente.objects.get(correo = correo)
-            if check_password(password, paciente.password):
+            if password == paciente.password:
                 request.session['paciente_id'] = paciente.id
                 request.session['nombre'] = paciente.nombre
                 return redirect('resultados')
@@ -38,8 +38,8 @@ def requiere_login(view_func):
 #@requiere_login
 def resultado(request):
     paciente_id = request.session.get('paciente_id')
-    informes = Resultado.objects.filter(paciente_id=paciente_id, informe__isnull=False).select_related('medico')
-    imagenes = Resultado.objects.filter(paciente_id=paciente_id, imagen__isnull=False).select_related('medico')
+    informes = Resultado.objects.filter(paciente_id=paciente_id, informe__isnull=False).select_related('medico').exclude(informe='')
+    imagenes = Resultado.objects.filter(paciente_id=paciente_id, imagen__isnull=False).select_related('medico').exclude(imagen='')
     return render(request, 'resultados.html', {'informe': informes, 'imagen': imagenes})
 
 #@requiere_login
