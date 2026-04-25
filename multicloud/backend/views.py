@@ -5,6 +5,8 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.hashers import check_password
 import re
 from functools import wraps
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def login (request):
@@ -46,3 +48,58 @@ def resultado(request):
 def detalle(request, id):
     resultado = Resultado.objects.get(id=id)
     return render(request, 'detalle.html', {'resultado':resultado})
+
+@csrf_exempt
+def login_api(request):
+    if request.method == "POST":
+        correo = request.POST.get('correo','').strip().lower()
+        password = request.POST.get('password', '').strip()
+
+        try:
+            paciente = Paciente.objects.get(correo = correo)
+
+            if password == paciente.password:
+                return JsonResponse({
+                    "success":True,
+                    "paciente_id": paciente.id,
+                    "nombre": paciente.nombre
+                })
+            else:
+                return JsonResponse({"success": False, "error": "credenciales incorrectas"})
+        except Paciente.DoesNotExist:
+            return JsonResponse({"success": False, "error": "credenciales incorrectas"})
+    return JsonResponse({"error": "metodo no permitido"}, status = 405)
+
+def resultados_api(request):
+    paciente_id = request.GET.get('paciente_id')
+
+    resultados = Resultado.objects.filter(paciente_id = paciente_id).select_related('medico')
+
+    data = []
+
+    for r in resultados:
+        data.append({
+            "id": r.id,
+            "examen": r.examen,
+            "medico": r.medico.nombre,
+            "imagen": request.build_absolute_uri(r.imagen.url) if r.imagen else None,
+            "informe": request.build_absolute_uri(r.informe.url) if r.informe else None,
+        })
+    return JsonResponse(data, safe=False)
+
+def detalle_api(request, id):
+    r = get_object_or_404(Resultado, id=id)
+
+    data = {
+        "id": r.id,
+        "examen": r.examen,
+        "medico": r.medico.nombre,
+        "imagen": request.build_absolute_uri(r.imagen.url) if r.imagen else None,
+        "informe": request.build_absolute_uri(r.informe.url) if r.informe else None,
+    }
+
+    return JsonResponse(data)
+
+
+    
+        

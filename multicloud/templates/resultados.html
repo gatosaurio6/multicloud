@@ -56,29 +56,38 @@
     </head>
     <body>
         <h1>Resultados</h1>
-
-        <h2>Imágenes</h2>
-        <div class="contenedor">
-            {% for r in imagen %}
-                <a href="{% url 'detalle' r.id %}" class="card imagen">
-                    <div class="titulo">{{ r.examen }}</div>
-                    <div class="medico"> Dr. {{ r.medico.nombre }}</div>
-                </a>
-            {% empty %}
-                <p>no hay imagenes disponibles</p>
-            {% endfor %}
-        </div>
-
-        <h2>Informe</h2>
-        <div class="contenedor">
-            {% for r in informe %}
-                <a href="{% url 'detalle' r.id %}" class="card informe">
-                    <div class="titulo">{{r.examen}}</div>
-                    <div class="medico">Dr.{{r.medico.nombre}}</div>
-                </a>
-            {% empty %}
-                <p>No hay informes disponibles</p>
-            {% endfor %}
-        </div>
+        <h2>Imagenes</h2>
+        <div id = "imagenes" class = "contenedor"></div>
+        <h2>Informes</h2>
+        <div id = "informes" class = "contenedor"></div>
     </body>
+    <script>
+        const paciente_id = localStorage.getItem("paciente_id");
+        fetch(`http://127.0.0.1:8000/hospital/api/resultados/?paciente_id=${paciente_id}`)
+        .then(res => res.json())
+        .then(data => {
+            const contImagenes = document.getElementById("imagenes");
+            const contInformes = document.getElementById("informes");
+
+            data.forEach(r => {
+                const card = document.createElement("a");
+                card.className = "card";
+                card.href = `/hospital/detalle/${r.id}/`;
+                card.innerHTML = `
+                <div class = "titulo">${r.examen}</div>
+                <div class = "medico">Dr.${r.medico}</div>
+                `;
+
+                if (r.imagen) {
+                    card.classList.add("imagen");
+                    contImagenes.appendChild(card);
+                }
+
+                if (r.informe) {
+                    card.classList.add("informe");
+                    contInformes.appendChild(card);
+                }
+            });
+        });
+    </script>
 </html>

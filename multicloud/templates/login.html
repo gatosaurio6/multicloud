@@ -7,29 +7,34 @@
 </html>
 <body>
     <div class="login-box">
-        <h2>Login</h2>
-        {% if messages %}
-            {% for message in messages %}
-                <p class="error">{{ message }}</p>
-            {% endfor %}
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            <div class="user-box">
-                <input type="text" name="correo" id="id_correo" placeholder="Tu correo">
-                <label for="id_username">Usuario:</label>
-            </div>
-
-            <div class="user-box">
-                <input type="password" name="password" id="id_password" placeholder="Tu contraseña">
-                <label for="id_password">contraseña:</label>
-            </div>
-
-            <button type="submit" class="animated-button">
-                <span class="arr-1"></span>
-                <span class="text">Ingresar</span>
-                <span class="arr-2"></span>
-            </button>
-        </form>
+       <input type="text" id = "correo" placeholder="Tu correo">
+       <input type="password" id="contraseña" placeholder="Tu contraseña">
+       <button onclick="login()">Ingresar</button>
+       <p id="error" style="color:red"></p>
     </div>
+    <script>
+        function login() {
+            const correo = document.getElementById("correo").value;
+            const contraseña = document.getElementById("contraseña").value;
+            fetch ("http://127.0.0.1:8000/hospital/api/login/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                    correo: correo,
+                    password: contraseña
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem("paciente_id", data.paciente_id);
+                    window.location.href = "/hospital/resultados/";
+                } else {
+                    document.getElementById("error").innerText = "credenciales incorrectas"
+                }
+            });
+        }
+    </script>
 </body>

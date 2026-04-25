@@ -5,24 +5,38 @@
     </head>
 
     <body>
-        {% if resultado.imagen %}
-            <img src="{{ resultado.imagen.url }}">
-        {% endif %}
+        <h1>Detalle</h1>
 
-        {% if resultado.informe %}
-            <iframe src="{{ resultado.informe.url }}"></iframe>
-        {% endif %}
+        <div id = "contenido"></div>
 
-        {% if resultado.informe %}
-            <p>
-                <a href="{{ resultado.informe.url }}" dowload> descargar informe</a>
-            </p>
-        {% endif %}
-        
-        {% if resultado.imagen %}
-            <p>
-                <a href="{{ resultado.imagen.url}}" dowload>Descargar imagen</a>
-            </p>
-        {% endif %}
+        <script>
+            const path = window.location.pathname;
+            const partes = path.split("/");
+            const id = partes[partes.length -2];
+
+            if (!id) {
+                document.body.innerHTML = "ID no especificado";
+            }
+
+            fetch(`http://127.0.0.1:8000/hospital/api/detalle/${id}/`)
+            .then(res => res.json())
+            .then(r => {
+                const cont = document.getElementById("contenido");
+
+                let html = `<h2>${r.examen}</h2>`;
+
+                if (r.imagen) {
+                    html += `<img src = "${r.imagen}" width="300"><br>`;
+                }
+
+                if (r.informe) {
+                    html += `<iframe src="${r.informe}" width = "600" height = "400"></iframe><br>`;
+                    html += `<a href="${r.informe}" download>Descargar informe</a>`;
+                }
+
+                cont.innerHTML = html;
+            });
+
+        </script>
     </body>
 </html>
